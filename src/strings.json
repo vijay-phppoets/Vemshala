@@ -1,0 +1,29 @@
+{
+    "api_err_msg": "Something is not right.",
+    "filter_price": [
+        {
+            "label": "₹0 to ₹499",
+            "value": "0-499"
+        },
+        {
+            "label": "₹500 to ₹999",
+            "value": "500-999"
+        },
+        {
+            "label": "₹1000 to ₹1499",
+            "value": "1000-1499"
+        },
+        {
+            "label": "₹1500 to ₹1999",
+            "value": "1500-1999"
+        },
+        {
+            "label": "₹2000 to ₹2499",
+            "value": "2000-2499"
+        },
+        {
+            "label": "₹2500 and above",
+            "value": "2500-above"
+        }
+    ]
+}
