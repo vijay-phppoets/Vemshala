@@ -53,7 +53,7 @@ const Wishlist = props => {
             <GlobleBox>
                 <Wrapper>
                     <Row gutter='12' >
-                        <Col xs={24} sm={24} md={6} lg={6} xl={6} style={{ padding: 16 }} >
+                        <Col  xs={24} sm={24} md={6} lg={6} xl={6} style={{ padding: 16 }} >
                             <ProfileMenu />
                         </Col>
                         <Col xs={24} sm={24} md={18} lg={18} xl={18} style={{ display: 'flex', justifyContent: 'center' }} >
@@ -63,10 +63,10 @@ const Wishlist = props => {
                                 </div>
                                 {getWishlistState.total_records > 0 &&
                                     <div>
-                                        <ProductsWrapper>
+                                        <ProductsWrapper className="wishid">
                                             {getWishlistState?.list.map((obj, idx) => (
                                                 <ProductsBox  key={idx}>
-                                                    <Product link="/product" forWishlist={true} isWishlist={true} product={obj} currencyType={currencyType} />
+                                                    <Product link="/product" forWishlist={true} isWishlist={true} product={obj} currencyType={currencyType}  />
                                                     <div style={{ width: "100%" }} >
                                                         <CartBtn type="primary" onClick={() => handleRemove(obj.wishlist_id)} >Remove</CartBtn>
                                                     </div>

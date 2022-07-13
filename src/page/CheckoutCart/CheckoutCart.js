@@ -173,7 +173,7 @@ const CheckoutCart = props => {
                                             </CartItem>
                                         ))}
                                     </>
-                                    : <div style={{ height: "100%", display: "flex", justifyContent: "center", alignItems: "center", padding:"150px 80px" }} >No product added to the cart.</div>
+                                    : <div className="mob-detail" style={{ height: "100%", display: "flex", justifyContent: "center", alignItems: "center", padding:"150px 30px 150px 370px" }} >No product added to the cart.</div>
                                 }
 
 

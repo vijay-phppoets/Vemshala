@@ -63,7 +63,7 @@ const Footer = props => {
                         </Space>
                     </FooterBox>
                 </FooterWrapper>
-                <div style={{ padding: "10px 2px", textAlign: "center", color: "#fff" }} >
+                <div className="footer-mob" style={{ padding: "10px 2px", textAlign: "center", color: "#fff"}} >
                     ©2021 Piky - all rights reserved
                 </div>
             </Wrapper>

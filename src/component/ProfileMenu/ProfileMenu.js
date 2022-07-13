@@ -33,7 +33,7 @@ const ProfileMenu = props => {
     }
 
     return (
-        <>
+        <> <div className="wish-card">
             {redirect[0] &&
                 <Redirect to={redirect[1]} />}
             <Menu
@@ -59,6 +59,7 @@ const ProfileMenu = props => {
                     <LogoutOutlined /> Logout
                 </Menu.Item>
             </Menu>
+            </div>
         </>
     )
 }
