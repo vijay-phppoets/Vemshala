@@ -159,10 +159,7 @@ const Login = props => {
                             </Form>
 
                             <Divider plain>OR</Divider>
-                            <Button block size="large"
-                                onClick={() => toggleSignupModal()}
-                            >Create an Account</Button>
-
+                            <Button block size="large" onClick={() => toggleSignupModal()} >Create an Account ||</Button>
                         </Left>
                         <Right>
                             <div style={{ marginTop: 8 }} >

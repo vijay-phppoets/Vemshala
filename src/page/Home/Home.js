@@ -238,7 +238,7 @@ const Home = props => {
                         <GlobleBox style={{ background: "#f1e8df", marginTop: 64 }} >
                             <Wrapper style={{ display: "flex", justifyContent: "center" }} >
                                 <div style={{
-                                    maxWidth: 600,
+                                    maxWidth: 900,
                                     width: "100%",
                                     display: "flex",
                                     flexDirection: "column",

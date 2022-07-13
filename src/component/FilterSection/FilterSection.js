@@ -74,11 +74,11 @@ const FilterSection = props => {
                 </Space>
 
             </div>
-            <div style={{ background: "#fff", marginTop: 8, height: visible ? 400 : 0, overflowY: "scroll", display: "flex", flexFlow: "wrap" }} className="filter-box" >
+            <div style={{ background: "#fff", marginTop: 8, height: visible ? 200 : 0,  display: "flex", flexFlow: "wrap",border:'1px solid #999',borderRadius:'20px' }} className="filter-box" >
                 {categories.length > 0 &&
-                    <div style={{ width: 300, padding: "20px 10px" }} >
+                    <div style={{ width: '20%', padding: "20px 10px" }} >
                         <h4 style={{ color: "#00000099" }} >FILTER BY CATEGORY</h4>
-                        <div style={{ padding: "0 4px", maxHeight: 200, overflowY: "scroll", display: "flex", flexDirection: "column" }} >
+                        <div style={{ padding: "0 4px", maxHeight: 200, overflowY: "hidden", display: "flex", flexDirection: "column" }} >
                             {categories.map(cat => (
                                 <Checkbox style={{ marginLeft: 8 }}
                                     onChange={e => props.handleFilter('category', cat.url_key, e.target.checked)}
@@ -88,9 +88,9 @@ const FilterSection = props => {
                         </div>
                     </div>
                 }
-                <div style={{ width: 300, padding: "20px 10px" }} >
+                <div style={{ width:'20%', padding: "20px 10px" }} >
                     <h4 style={{ color: "#00000099" }} >FILTER BY PRICE</h4>
-                    <div style={{ padding: "0 4px", maxHeight: 200, overflowY: "scroll", display: "flex", flexDirection: "column" }} >
+                    <div style={{ padding: "0 4px", maxHeight: 200, overflowY: "hidden", display: "flex", flexDirection: "column" }} >
                         {filter_price.map(obj => (
                             <Checkbox style={{ marginLeft: 8 }}
                                 onChange={e => props.handleFilter('price', obj.value, e.target.checked)}
@@ -100,9 +100,9 @@ const FilterSection = props => {
                     </div>
                 </div>
                 {attributes.map(att => (
-                    <div style={{ width: 300, padding: "20px 10px" }} >
+                    <div style={{ width: '20%', padding: "20px 10px" }} >
                         <h4 style={{ color: "#00000099", textTransform: "uppercase" }} >FILTER BY {att.name}</h4>
-                        <div style={{ padding: "0 4px", maxHeight: 200, overflowY: "scroll", display: "flex", flexDirection: "column" }} >
+                        <div style={{ padding: "0 4px", maxHeight: 200, overflowY: "hidden", display: "flex", flexDirection: "column" }} >
                             {att.options.map(option => (
                                 <label style={{ display: "flex", alignItems: "center", cursor: "pointer" }} >
                                     <Checkbox style={{ marginLeft: 8 }}

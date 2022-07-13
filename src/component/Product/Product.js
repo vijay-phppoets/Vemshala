@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import { connect } from "react-redux"
 import { HeartOutlined, HeartFilled, ShoppingCartOutlined
 } from "@ant-design/icons"
-import { message } from "antd"
+import { message,Button, Modal } from "antd"
 
 /* custom components */
 import { Container, Description } from "./ProductStyle"
@@ -52,7 +52,19 @@ const Product = props => {
         }
 
     }
+const [isModalVisible, setIsModalVisible] = useState(false);
 
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
 
     return (
         <Container >
@@ -85,9 +97,9 @@ const Product = props => {
                                 icon={<ShoppingCartOutlined />} 
                                 disabled
                             >OUT OF STOCK</CartButton>
-                            : <CartButton 
+                            : <CartButton  onClick={showModal}
                                 icon={<ShoppingCartOutlined />}
-                                onClick={() => handleAddToCart(product?.id, 1)}
+                                // onClick={() => handleAddToCart(product?.id, 1)}
                                 loading={updateCartState.apiState === "loading"}
                             >ADD TO CART</CartButton>
                         }
@@ -124,6 +136,43 @@ const Product = props => {
                 accountVisible={accountVisible}
                 onClose={() => setAccountVisible(false)}
             />
+            <Modal title="Select Size" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+            
+            <div className="product-details">
+                <div className="row" style={{display:'flex'}}>
+                    <div className="col-md-3" style={{width:'30%'}}>
+                        <div className="product-image">
+                        <img src={`${product ? cnf.s3_base_url : ""}${product && product.thumbnail || "/saree1.jpeg"}`} alt="" style={{ width: "100%", height: "auto" }} />
+                        </div>
+                    </div>
+                    <div className="col-md-9" style={{width:'70%'}}>
+                        <div className="d-content">
+                            <Description>
+                        <div style={{ fontSize: 16, color: "#000", textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" }} >{product && product.name || "product name"}</div>
+                        <div style={{ fontWeight: "bold", color: "#000",  fontSize: 16, textAlign:"center" }} >
+                            {currencyType == "USD" ? <>$</> : <>₹</>}
+                            {product?.actual_price}
+                        {product?.is_sale_price === "yes" &&
+                            <span style={{ fontWeight: "normal", color: "#00000099", fontSize: 14, textAlign:"center" , textDecoration: "line-through", marginLeft: 4 }} >
+                                {currencyType == "USD" ? <>$</> : <>₹</>}
+                                {product.regular_price}</span>
+                        }
+                        </div>
+                    </Description>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div className="size-btn">
+                                            <div className="main-btn">
+                                            <a href="#" className="btn btn-group small">S</a>
+                                            <a href="#" className="btn btn-group medium">M</a>
+                                            <a href="#" className="btn btn-group large">L</a>
+                                            <a href="#" className="btn btn-group x-large">XL</a>
+                                            </div>
+
+                                        </div>
+      </Modal>
         </Container>
     )
 }
