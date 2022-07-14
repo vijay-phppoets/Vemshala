@@ -392,3 +392,6 @@ main div {
   width: 100%;
   margin-top: 8px;
 }
+
+input  { border-radius: 8px !important; }
+button { border-radius: 8px !important; }

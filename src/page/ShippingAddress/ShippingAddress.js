@@ -175,7 +175,7 @@ const ShippingAddress = props => {
                 "lname":add.last_name,
                 "company_name":add.company_name,
                 "phone":add.phone,
-                // "email":add.email,
+                "email":add.email,
                 "country":add.country,
                 "state":add.state,
                 "city":add.city,
@@ -218,7 +218,7 @@ const ShippingAddress = props => {
                                     <AddressValue style={{ textTransform: "uppercase" }} >{address.city},{address.state}  </AddressValue><br/>
                                     <AddressValue style={{ textTransform: "uppercase" }} >  {address.country} , {address.zip_code}</AddressValue><br />
                                     <AddressValue>{address.phone}</AddressValue><br />
-                                    {/* <AddressValue>{address.email}</AddressValue> */}
+                                    <AddressValue>{address.email}</AddressValue>
                             </AddressCard>)
                                 })} 
                             </>
@@ -410,6 +410,11 @@ const ShippingAddress = props => {
                                         <Input name="phone" placeholder="Enter Phone"
                                             onChange={handleOnChange}
                                         />
+                                    </Form.Item>
+                                </Col>
+                                <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                                    <Form.Item maxLength={15} name="email" label="Email" style={{ marginBottom: "6px" }} rules={[{ required: true, message: 'Please enter email address' },{ type: 'email', message: 'Please enter valid email address',}]}>
+                                        <Input name="email" placeholder="Enter Email Address" onChange={handleOnChange} />
                                     </Form.Item>
                                 </Col>
                                 
