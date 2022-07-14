@@ -464,6 +464,18 @@ const ProductDetail = (props) => {
                         </Price>
                       )}
                     </Space>
+
+                    <ShortDescription>
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html:
+                            getProductDetailState.product.short_description.replace(
+                              /(?:\r\n|\r|\n)/g,
+                              "<br />"
+                            ),
+                        }}
+                      ></div>
+                    </ShortDescription>
                     <div className="size">
                       {getProductDetailState.product.type === "simple" && (
                         <React.Fragment>
@@ -706,18 +718,6 @@ const ProductDetail = (props) => {
                         </div>
                       </Modal>
                     </div>
-                    <ShortDescription>
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html:
-                            getProductDetailState.product.short_description.replace(
-                              /(?:\r\n|\r|\n)/g,
-                              "<br />"
-                            ),
-                        }}
-                      ></div>
-                    </ShortDescription>
-
                     <div className="miles">
                       <div className="points">
                         <h3>
@@ -829,6 +829,7 @@ const ProductDetail = (props) => {
                         )}
 
                         <WishlistButton
+                          className="mainWidth"
                           type="default"
                           size="large"
                           icon={
@@ -927,7 +928,7 @@ const ProductDetail = (props) => {
                   </h1>
                   <RelatedProductWrapper>
                     {getProductDetailState.relatedProds.map((prod) => (
-                      <RelatedProductBox>
+                      <RelatedProductBox className="desktop">
                         <Product product={prod} currencyType={getCurrency()} />
                       </RelatedProductBox>
                     ))}
