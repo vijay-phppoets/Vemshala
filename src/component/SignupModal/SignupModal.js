@@ -70,6 +70,9 @@ const SignupModal = props => {
     }
 
     const handleSubmit = () => {
+
+        if(formData.contact_no.length < 10) { return alert('please enter valid contact no') }
+
         createCustomer(formData)
     }
 
@@ -111,6 +114,11 @@ const SignupModal = props => {
                             onChange={handleInputChange}
                         />
                     </Form.Item>
+
+                    <Form.Item name="contact_no" label="Contact Number" rules={[{ required: true, message: 'Required' }]}>
+                        <Input name="contact_no" size="large" placeholder="Enter Contact No" onChange={handleInputChange}/>
+                    </Form.Item>
+
                     <Form.Item
                         name="password"
                         label="Set Password"
