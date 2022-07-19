@@ -3,7 +3,16 @@ import {
   HeartOutlined,
   ShoppingCartOutlined,
 } from "@ant-design/icons";
-import { Button, Divider, Dropdown, Menu, message, Modal, Radio, Row, Select, Space, Spin } from "antd";
+import {
+  Button,
+  Divider,
+  message,
+  Modal,
+  Radio,
+  Select,
+  Space,
+  Spin,
+} from "antd";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
@@ -18,8 +27,6 @@ import {
   TwitterShareButton,
 } from "react-share";
 import "../Script.js";
-import Mount from '../../modules/Mount'
-
 
 /* CUSTOM COMPONENTS */
 import Product from "../../component/Product/Product";
@@ -294,159 +301,184 @@ const ProductDetail = (props) => {
     setIsModalVisible(false);
   };
 
-   window.addEventListener('scroll',() => {
+  window.addEventListener("scroll", () => {
+    const stickyHead = document.querySelector(".sticky-head");
+    const targetButton = document.querySelector(".target-button");
+    const productImage = document.querySelectorAll(".product-image ");
 
-      const stickyHead = document.querySelector('.sticky-head');
-      const targetButton = document.querySelector('.target-button');
-      const productImage  = document.querySelectorAll('.product-image ');
+    if (targetButton === null || stickyHead === null || productImage === null) {
+      return 0;
+    }
 
-      if(targetButton === null || stickyHead === null || productImage === null){  return 0;  }
+    if (window.scrollY >= targetButton.offsetTop) {
+      stickyHead.style.visibility = "visible";
+    } else {
+      stickyHead.style.visibility = "hidden";
+    }
 
-      if((window.scrollY ) >= targetButton.offsetTop) { stickyHead.style.visibility = 'visible' }
-
-      else { stickyHead.style.visibility = 'hidden' }
-
-      // console.clear();
-      // console.log('sticky head container',stickyHead.scrollTop)
-      // console.log('window scroll Y',window.scrollY)
-      // console.log('target button scrool top',targetButton.scrollTop)
-      // console.log('targetButton offsetTop',targetButton.offsetTop)
-      // console.log('targetButton scrollY',targetButton.scrollY)
-      // console.log(document.body.scrollTop)
-      // console.log(window.pageXOffset)
-      // console.log(productImage[productImage.length- 1].scrollTop)
-      // console.log(scrollTop)
-
-   })
+    // console.clear();
+    // console.log('sticky head container',stickyHead.scrollTop)
+    // console.log('window scroll Y',window.scrollY)
+    // console.log('target button scrool top',targetButton.scrollTop)
+    // console.log('targetButton offsetTop',targetButton.offsetTop)
+    // console.log('targetButton scrollY',targetButton.scrollY)
+    // console.log(document.body.scrollTop)
+    // console.log(window.pageXOffset)
+    // console.log(productImage[productImage.length- 1].scrollTop)
+    // console.log(scrollTop)
+  });
 
   // @coder-kabir -------------------------------------------------------
 
-      const [picoCondtion, updatePicoCondition] = useState('No');
-      const [blouseCondition,updateBlouseCondition]  = useState('No');
-      const [sizeCondition,updateSizeCondition] = useState('S');
+  const [picoCondtion, updatePicoCondition] = useState("No");
+  const [blouseCondition, updateBlouseCondition] = useState("No");
+  const [sizeCondition, updateSizeCondition] = useState("S");
 
-      const [salesPriceAvailable,updateSalesPriceAvailability] = useState(false);
-      const [salesPrice,updateSalesPrice]     = useState(0);
-      const [productPrice,updateProductPrice] = useState(0);
+  const [salesPriceAvailable, updateSalesPriceAvailability] = useState(false);
+  const [salesPrice, updateSalesPrice] = useState(0);
+  const [productPrice, updateProductPrice] = useState(0);
 
-      
-      useEffect(() => { 
+  useEffect(() => {
+    if (getProductDetailState.product === undefined) return null;
 
-        if(getProductDetailState.product === undefined) return null
+    if (getProductDetailState.product.is_sale_price === "yes") {
+      updateSalesPriceAvailability(true); /* show sales price */
 
-        if(getProductDetailState.product.is_sale_price === "yes"){
+      updateSalesPrice(getProductDetailState.product.sale_price);
+    }
 
-            updateSalesPriceAvailability(true) /* show sales price */
+    updateProductPrice(getProductDetailState.product.price);
 
-            updateSalesPrice(getProductDetailState.product.sale_price)
-        }
+    return () => null;
+  }, [getProductDetailState.apiState]);
 
-        updateProductPrice(getProductDetailState.product.price)
-        
-        return () => null
-    
-      },[getProductDetailState.apiState])
-
-
-      const picoHandler = (value) => {
-
-          if(value === 'Yes') { 
-
-              if(salesPriceAvailable === true) { updateSalesPrice(salesPrice + 250); }
-          
-              else {  updateProductPrice(productPrice + 250); }
-          }
-
-          else { 
-          
-              if(salesPriceAvailable === true) { updateSalesPrice(salesPrice - 250); }
-          
-              else {  updateProductPrice(productPrice - 250); }
-          }
-
-        updatePicoCondition(value) /* toggle price visibility */ 
+  const picoHandler = (value) => {
+    if (value === "Yes") {
+      if (salesPriceAvailable === true) {
+        updateSalesPrice(salesPrice + 250);
+      } else {
+        updateProductPrice(productPrice + 250);
       }
+    } else {
+      if (salesPriceAvailable === true) {
+        updateSalesPrice(salesPrice - 250);
+      } else {
+        updateProductPrice(productPrice - 250);
+      }
+    }
+
+    updatePicoCondition(value); /* toggle price visibility */
+  };
 
   // --------------------------------------------------------------------
-  
 
-
-return (
-  <React.Fragment>
-    <GlobleBox id="wrap">
+  return (
+    <React.Fragment>
+      <GlobleBox id="wrap">
         <Helmet>
-            <title>{getProductDetailState.product.name}</title>
-            <meta name="og:title" property="og:title" content={getProductDetailState.product.name}/>
-            <meta name="description" content={getProductDetailState.product.short_description}/>
+          <title>{getProductDetailState.product.name}</title>
+          <meta
+            name="og:title"
+            property="og:title"
+            content={getProductDetailState.product.name}
+          />
+          <meta
+            name="description"
+            content={getProductDetailState.product.short_description}
+          />
         </Helmet>
         <Wrapper>
           <div className="sticky-head">
-              <div>
-                <p><b>{ selectedProduct ? selectedProduct.name : getProductDetailState.product.name }</b></p>
-                    
-                {(salesPriceAvailable === true) ? (
-                            
-                            <div className="price-sticky">
-                                <Price> { getCurrency() == "USD" ? <>$</> : <>₹</>  } { inr(salesPrice) } </Price>&nbsp;&nbsp;
-                                <RegulerPrice style={{ fontSize:'20px', fontWeight:'400' }}> { getCurrency() == "USD" ? <>$</> : <>₹</> } { inr(productPrice) } </RegulerPrice>
-                            </div>
-                          ) : (
-                            <Price>
-                                { getCurrency() == "USD" ? <>$</> : <>₹</>}
-                                { inr(productPrice) }
-                            </Price>
-                          )}
-              </div>
+            <div>
+              <p>
+                <b>
+                  {selectedProduct
+                    ? selectedProduct.name
+                    : getProductDetailState.product.name}
+                </b>
+              </p>
 
+              {salesPriceAvailable === true ? (
+                <div className="price-sticky">
+                  <Price>
+                    {" "}
+                    {getCurrency() == "USD" ? <>$</> : <>₹</>} {inr(salesPrice)}{" "}
+                  </Price>
+                  &nbsp;&nbsp;
+                  <RegulerPrice style={{ fontSize: "20px", fontWeight: "400" }}>
+                    {" "}
+                    {getCurrency() == "USD" ? <>$</> : <>₹</>}{" "}
+                    {inr(productPrice)}{" "}
+                  </RegulerPrice>
+                </div>
+              ) : (
+                <Price>
+                  {getCurrency() == "USD" ? <>$</> : <>₹</>}
+                  {inr(productPrice)}
+                </Price>
+              )}
+            </div>
 
             <div className="sticky-head-btn">
-          <CartButton
-                            type="primary"
-                            size="large"
-                            icon={<ShoppingCartOutlined />}
-                            style={{ marginRight: 8 ,width: '10em',height:'2.5em'}}
-                            onClick={() =>
-                              handleAddToCart(
-                                getProductDetailState.product.id,
-                                1
-                              )
-                            }
-                            loading={updateCartState.apiState === "loading"}
-                          >
-                            ADD TO CART
-                          </CartButton>
-                          <WishlistButton
-                          className="mainWidth"
-                          type="default"
-                          size="large"
-                          icon={
-                            getProductDetailState.is_wishlisted ||
-                            saveWishlistState.apiState === "success" ? (
-                              <HeartFilled />
-                            ) : (
-                              <HeartOutlined />
-                            )
-                          }
-                          onClick={() =>
-                            handleWishlistAdd(getProductDetailState.product.id)
-                          }
-                        >
-                          {getProductDetailState.is_wishlisted ||
-                          saveWishlistState.apiState === "success"
-                            ? "WISHLISTED"
-                            : "WISHLIST"}
-                        </WishlistButton>
-            
-          </div>
+              <CartButton
+                type="primary"
+                size="large"
+                icon={<ShoppingCartOutlined />}
+                style={{ marginRight: 8, width: "10em", height: "2.5em" }}
+                onClick={() =>
+                  handleAddToCart(getProductDetailState.product.id, 1)
+                }
+                loading={updateCartState.apiState === "loading"}
+              >
+                ADD TO CART
+              </CartButton>
+              <WishlistButton
+                className="mainWidth"
+                type="default"
+                size="large"
+                icon={
+                  getProductDetailState.is_wishlisted ||
+                  saveWishlistState.apiState === "success" ? (
+                    <HeartFilled />
+                  ) : (
+                    <HeartOutlined />
+                  )
+                }
+                onClick={() =>
+                  handleWishlistAdd(getProductDetailState.product.id)
+                }
+              >
+                {getProductDetailState.is_wishlisted ||
+                saveWishlistState.apiState === "success"
+                  ? "WISHLISTED"
+                  : "WISHLIST"}
+              </WishlistButton>
+            </div>
           </div>
           {getProductDetailState.apiState === "loading" && (
-            <div  style={{ minHeight: 500, display: "flex", justifyContent: "center", alignItems: "center", }}>
+            <div
+              style={{
+                minHeight: 500,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               <Spin size="large" />
             </div>
           )}
           {getProductDetailState.apiState === "success" && (
             <>
-              <div style={{ display: "flex", marginTop: 16, flexFlow: "wrap", background: "#fff", padding: 10,borderRadius: 4}}>
+              <div
+                style={{
+                  display: "flex",
+                  marginTop: 16,
+                  flexFlow: "wrap",
+                  background: "#fff",
+                  padding: 10,
+                  borderRadius: 4,
+                }}
+              >
                 <Left>
                   <DesktopImgContainer>
                     <div>
@@ -504,27 +536,36 @@ return (
                   </MobileImgContainer>
                 </Left>
                 <Right>
-                    <div style={{ top: 90 }}>
-                        <h1 style={{ margin: 0, marginTop: 2, fontSize: 22 }}>
-                            { selectedProduct ? selectedProduct.name : getProductDetailState.product.name }
-                        </h1>
+                  <div style={{ top: 90 }}>
+                    <h1 style={{ margin: 0, marginTop: 2, fontSize: 22 }}>
+                      {selectedProduct
+                        ? selectedProduct.name
+                        : getProductDetailState.product.name}
+                    </h1>
 
-                        <Space style={{ marginBottom: 16 }}>
-                            {(salesPriceAvailable === true) ? (
-                            
-                                <React.Fragment>
-                                    <Price> { getCurrency() == "USD" ? <>$</> : <>₹</>  } { inr(salesPrice) } </Price>
-                                    <RegulerPrice> { getCurrency() == "USD" ? <>$</> : <>₹</> } { inr(productPrice) } </RegulerPrice>
-                                </React.Fragment>
-                              ) : (
-                                <Price>
-                                    { getCurrency() == "USD" ? <>$</> : <>₹</>}
-                                    { inr(productPrice) }
-                                </Price>
-                              )}
-                        </Space>
-                    
-                        {/* <Space style={{ marginBottom: 16 }}>
+                    <Space style={{ marginBottom: 16 }}>
+                      {salesPriceAvailable === true ? (
+                        <React.Fragment>
+                          <Price>
+                            {" "}
+                            {getCurrency() == "USD" ? <>$</> : <>₹</>}{" "}
+                            {inr(salesPrice)}{" "}
+                          </Price>
+                          <RegulerPrice>
+                            {" "}
+                            {getCurrency() == "USD" ? <>$</> : <>₹</>}{" "}
+                            {inr(productPrice)}{" "}
+                          </RegulerPrice>
+                        </React.Fragment>
+                      ) : (
+                        <Price>
+                          {getCurrency() == "USD" ? <>$</> : <>₹</>}
+                          {inr(productPrice)}
+                        </Price>
+                      )}
+                    </Space>
+
+                    {/* <Space style={{ marginBottom: 16 }}>
                             {( selectedProduct ? selectedProduct.is_sale_price : getProductDetailState.product.is_sale_price) === "yes" ? (
                             
                                 <React.Fragment>
@@ -555,26 +596,41 @@ return (
                       ></div>
                     </ShortDescription>
 
-{/* @coder-kabir--------------------------------------------------------------------------- */}
+                    {/* @coder-kabir--------------------------------------------------------------------------- */}
 
-<div className="size">
-  { getProductDetailState.product.type === "variant" && (
-      <React.Fragment>
-          <div className="size-head">
-              <h2>Select Size</h2>
-              <a className="btn btn-group">
-                  <h3 onClick={() => setIsBlouseModal(true)} style={{ marginBottom: "0",marginTop: "5px", marginLeft: "1em",color: "#ff3f6c",}}>Size chart</h3>
-              </a>
-          </div>
-          <div className="size-btn"><div className="main-btn">
-              <Radio.Group onChange={(event) => console.log(event.target)} value={'S'}>
-                  <Radio value={'S'}>S</Radio>
-                  <Radio value={'M'}>M</Radio>
-                  <Radio value={'L'}>L</Radio>
-                  <Radio value={'XL'}>XL</Radio>
-              </Radio.Group>
-          </div></div>
-                          
+                    <div className="size">
+                      {getProductDetailState.product.type === "variant" && (
+                        <React.Fragment>
+                          <div className="size-head">
+                            <h2>Select Size</h2>
+                            <a className="btn btn-group">
+                              <h3
+                                onClick={() => setIsBlouseModal(true)}
+                                style={{
+                                  marginBottom: "0",
+                                  marginTop: "5px",
+                                  marginLeft: "1em",
+                                  color: "#ff3f6c",
+                                }}
+                              >
+                                Size chart
+                              </h3>
+                            </a>
+                          </div>
+                          <div className="size-btn">
+                            <div className="main-btn">
+                              <Radio.Group
+                                onChange={(event) => console.log(event.target)}
+                                value={"S"}
+                              >
+                                <Radio value={"S"}>S</Radio>
+                                <Radio value={"M"}>M</Radio>
+                                <Radio value={"L"}>L</Radio>
+                                <Radio value={"XL"}>XL</Radio>
+                              </Radio.Group>
+                            </div>
+                          </div>
+
                           <div className="color">
                             <h2>Select Color</h2>
                             <div className="select-color">
@@ -599,101 +655,167 @@ return (
                       )}
                     </div>
                     <div className="hello" style={{ margin: "1em 0em" }}>
+                      {/* @coder-kabir -------------------------------------------------------------------------------------------------- */}
 
-{/* @coder-kabir -------------------------------------------------------------------------------------------------- */}
+                      {getProductDetailState.product.type === "simple" && (
+                        <Button type="primary" onClick={showModal}>
+                          Product Description
+                        </Button>
+                      )}
 
-  { getProductDetailState.product.type === "simple" && <Button type="primary" onClick={showModal}>Product Description</Button>  }
+                      <Modal
+                        title="Product Description"
+                        visible={isModalVisible}
+                        onOk={handleOk}
+                        onCancel={handleCancel}
+                      >
+                        <div className="blouse">
+                          <div className="blouse_chart">
+                            <div className="full">
+                              <div style={{ width: "30%" }}>
+                                <h4>
+                                  <b>Saree Pico : </b>
+                                </h4>
+                              </div>
+                              <div style={{ width: "30%" }}>
+                                <Radio.Group
+                                  onChange={(e) => {
+                                    picoHandler(e.target.value);
+                                  }}
+                                  value={picoCondtion}
+                                >
+                                  <Space direction="horizontal">
+                                    <Radio value={"Yes"}>Yes</Radio>
+                                    <Radio value={"No"}>NO</Radio>
+                                  </Space>
+                                </Radio.Group>
+                              </div>
+                              <div style={{ width: "40%" }}>
+                                {picoCondtion === "Yes" && (
+                                  <React.Fragment>
+                                    {getCurrency() == "USD" ? <>$</> : <>₹</>}{" "}
+                                    {salesPriceAvailable === true
+                                      ? salesPrice
+                                      : productPrice}
+                                  </React.Fragment>
+                                )}
+                              </div>
+                            </div>
 
-  <Modal title="Product Description" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-      <div className="blouse"><div className="blouse_chart">
-  
-          <div className="full">
-              <div style={{ width : "30%" }}><h4><b>Saree Pico : </b></h4></div>
-              <div style={{ width : "30%" }}>
-                  <Radio.Group onChange={(e) => { picoHandler(e.target.value) }} value={picoCondtion}>
-                      <Space direction="horizontal">
-                          <Radio value={'Yes'}>Yes</Radio>
-                          <Radio value={'No'}>NO</Radio>
-                      </Space>
-                  </Radio.Group>
-              </div>
-              <div style={{ width : "40%" }}> 
-                { picoCondtion === 'Yes' && 
-                  <React.Fragment>
-                      { getCurrency() == "USD" ? <>$</> : <>₹</>} {salesPriceAvailable === true ? salesPrice : productPrice} 
-                  </React.Fragment>
-                }
-              </div>
-          </div>
+                            <div className="full" style={{ marginTop: "20px" }}>
+                              <div style={{ width: "30%" }}>
+                                <h4>
+                                  <b>Blouse Stitching : </b>
+                                </h4>
+                              </div>
+                              <div style={{ width: "30%" }}>
+                                <Radio.Group
+                                  onChange={(e) => {
+                                    updateBlouseCondition(e.target.value);
+                                  }}
+                                  value={blouseCondition}
+                                >
+                                  <Space direction="horizontal">
+                                    <Radio value={"Yes"}>Yes</Radio>
+                                    <Radio value={"No"}>NO</Radio>
+                                  </Space>
+                                </Radio.Group>
+                              </div>
+                              <div style={{ width: "40%" }}>
+                                {blouseCondition === "Yes" && (
+                                  <Select
+                                    defaultValue="Select Design"
+                                    style={{
+                                      width: "100%",
+                                      borderRadius: "10px !important",
+                                    }}
+                                    onChange={(...data) => {
+                                      console.log(data);
+                                    }}
+                                  >
+                                    <option value="volvo">Line Blouse</option>
+                                    <option value="saab">Round Neck</option>
+                                    <option value="opel">Without Blouse</option>
+                                    <option value="audi">V Neck</option>
+                                  </Select>
+                                )}
+                              </div>
+                            </div>
 
-          <div className="full" style={{ marginTop:'20px' }}>
-              <div style={{ width : "30%" }}><h4><b>Blouse Stitching : </b></h4></div>
-              <div style={{ width : "30%" }}>
-                  <Radio.Group onChange={(e) => { updateBlouseCondition(e.target.value) }} value={blouseCondition}>
-                      <Space direction="horizontal">
-                          <Radio value={'Yes'}>Yes</Radio>
-                          <Radio value={'No'}>NO</Radio>
-                      </Space>
-                  </Radio.Group>
-              </div>
-              <div style={{ width : "40%" }}>
-                { blouseCondition === 'Yes' &&
-                
-                  <Select defaultValue="Select Design" style={{  width: '100%', borderRadius:'10px !important' }} onChange={(...data) => { console.log(data) }}>
-                      <option value="volvo">Line Blouse</option>
-                      <option value="saab">Round Neck</option>
-                      <option value="opel">Without Blouse</option>
-                      <option value="audi">V Neck</option>
-                  </Select>
-                }
-              </div>
-          </div>
+                            <div className="full" style={{ marginTop: "20px" }}>
+                              {blouseCondition === "Yes" && (
+                                <React.Fragment>
+                                  <div style={{ width: "30%" }}>
+                                    <h4>
+                                      <b>Blouse Size : </b>
+                                    </h4>
+                                  </div>
+                                  <div style={{ width: "50%" }}>
+                                    <Radio.Group
+                                      onChange={(e) => {
+                                        updateSizeCondition(e.target.value);
+                                      }}
+                                      value={sizeCondition}
+                                    >
+                                      <Space direction="horizontal">
+                                        <Radio value={"S"}>S</Radio>
+                                        <Radio value={"M"}>M</Radio>
+                                        <Radio value={"L"}>L</Radio>
+                                        <Radio value={"XL"}>XL</Radio>
+                                      </Space>
+                                    </Radio.Group>
+                                  </div>
+                                </React.Fragment>
+                              )}
+                            </div>
 
-          <div className="full" style={{ marginTop:'20px' }}>
-              { blouseCondition === 'Yes' && 
-                  <React.Fragment>
-                      <div style={{ width : "30%" }}><h4><b>Blouse Size : </b></h4></div>
-                      <div style={{ width : "50%" }}>
-                          <Radio.Group onChange={(e) => { updateSizeCondition(e.target.value) }} value={sizeCondition}>
-                              <Space direction="horizontal">
-                                  <Radio value={'S'}>S</Radio>
-                                  <Radio value={'M'}>M</Radio>
-                                  <Radio value={'L'}>L</Radio>
-                                  <Radio value={'XL'}>XL</Radio>
-                              </Space>
-                          </Radio.Group>
-                      </div>
-                  </React.Fragment>
-              }
-          </div>
+                            <div className="full">
+                              <div className="half_main">
+                                <div className="main-size">
+                                  <div className="size-head">
+                                    <h2>Show Size</h2>
+                                    <a className="btn btn-group">
+                                      <h3
+                                        onClick={() =>
+                                          setImageChart(!isImageChart)
+                                        }
+                                        style={{
+                                          marginBottom: "0",
+                                          marginTop: "5px",
+                                          marginLeft: "1em",
+                                          color: "#ff3f6c",
+                                        }}
+                                      >
+                                        Show size chart
+                                      </h3>
+                                    </a>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="full">
+                              <div style={{ width: "100%" }}>
+                                {isImageChart === true && (
+                                  <div
+                                    className="inner-img"
+                                    style={{ textAlign: "center" }}
+                                  >
+                                    <img
+                                      style={{
+                                        width: "240px",
+                                        height: "260px",
+                                      }}
+                                      src="https://vemshala-gallery.s3.ap-south-1.amazonaws.com/DSC_5099_1024x1024%402x.webp"
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Modal>
 
-          <div className="full">
-              <div className="half_main"><div className="main-size">
-                  <div className="size-head">
-                      <h2>Show Size</h2>
-                      <a className="btn btn-group">
-                          <h3 onClick={() => setImageChart(!isImageChart) } style={{ marginBottom: "0", marginTop: "5px", marginLeft: "1em", color: "#ff3f6c",}}>
-                            Show size chart
-                          </h3>
-                      </a>
-                  </div>
-              </div></div>
-          </div>
-          <div className="full"><div style={{ width:"100%" }}>
-              { isImageChart === true && (
-                    <div className="inner-img" style={{ textAlign:'center' }}>
-                          <img style={{ width: "240px",height: '260px' }} src="https://vemshala-gallery.s3.ap-south-1.amazonaws.com/DSC_5099_1024x1024%402x.webp"/>
-                    </div>
-              )}
-          </div></div>
-                          
-      </div></div>                  
-  </Modal>
-
-{/* code done :) -------------------------------------------------------------------------------------------------- */}
-
-
-
+                      {/* code done :) -------------------------------------------------------------------------------------------------- */}
 
                       <Modal
                         title="Size Chart"
@@ -807,7 +929,12 @@ return (
                             size="large"
                             icon={<ShoppingCartOutlined />}
                             style={{ marginRight: 8 }}
-                            onClick={() => handleAddToCart( getProductDetailState.product.id,1)}
+                            onClick={() =>
+                              handleAddToCart(
+                                getProductDetailState.product.id,
+                                1
+                              )
+                            }
                             className="target-button"
                             loading={updateCartState.apiState === "loading"}
                           >
@@ -857,7 +984,9 @@ return (
                       </div>
                       <div>
                         <Label>Tags:</Label>
-                        <span>{getProductDetailState.product.tags}</span>
+                        <a href="#">
+                          <span>{getProductDetailState.product.tags}</span>
+                        </a>
                       </div>
                       <div>
                         <Label>Country of origin:</Label>

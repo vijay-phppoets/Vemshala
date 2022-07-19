@@ -371,6 +371,7 @@ const Home = (props) => {
                         (testimonial) => (
                           <div>
                             <div
+                              className="test-mob"
                               style={{
                                 height: 200,
                                 display: "flex",
@@ -382,6 +383,7 @@ const Home = (props) => {
                                 {testimonial.description}
                               </p>
                               <div
+                                className="testimonial"
                                 style={{
                                   display: "flex",
                                   alignItems: "center",
@@ -389,6 +391,7 @@ const Home = (props) => {
                               >
                                 {testimonial.image ? (
                                   <Avatar
+                                    className="test-image"
                                     size={80}
                                     src={`${cnf.s3_base_url}${testimonial.image}`}
                                   />

@@ -174,8 +174,20 @@ html,
   width: 100% !important;
 }
 @media only screen and (max-width: 768px) {
+  .testimonial {
+    display: block !important;
+    text-align: center !important;
+  }
 
-  .sticky-head { display: none !important; }
+  .test-image {
+    text-align: center !important;
+  }
+  .test-mob {
+    height: 100% !important;
+  }
+  .sticky-head {
+    display: none !important;
+  }
 
   .desktop {
     width: 100% !important;
@@ -384,35 +396,34 @@ main div {
   border: none !important;
 }
 /* sticky cart head */
-.sticky-head{
-  width:100vw;
+.sticky-head {
+  width: 100vw;
   left: 0;
   /* align-items: center; */
-  position:fixed;
+  position: fixed;
   z-index: 2;
   background: rgb(247, 247, 247);
   display: flex;
   padding-right: 10em;
   padding-left: 10em;
   justify-content: space-between;
-  visibility:hidden;
+  visibility: hidden;
 }
-.sticky-head-btn{
-  display:flex;
+.sticky-head-btn {
+  display: flex;
   justify-content: end;
 }
-.sticky-head-btn .mainWidth{
+.sticky-head-btn .mainWidth {
   width: 10em !important;
   height: 2.5em !important;
 }
-.price-sticky{
+.price-sticky {
   display: flex;
   flex-direction: row;
 }
-.sticky-head p{
+.sticky-head p {
   margin-bottom: 0 !important;
 }
-
 
 .half_main {
   width: 50%;
@@ -426,7 +437,15 @@ main div {
   margin-top: 8px;
 }
 
-input  { border-radius: 8px !important; }
-button { border-radius: 8px !important; }
-.ant-select-selector { border-radius: 8px !important; }
-.ant-drawer-content { z-index: 3; }
+input {
+  border-radius: 8px !important;
+}
+button {
+  border-radius: 8px !important;
+}
+.ant-select-selector {
+  border-radius: 8px !important;
+}
+.ant-drawer-content {
+  z-index: 3;
+}
