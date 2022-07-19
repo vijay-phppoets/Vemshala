@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { Button, Row, Col, Radio, Divider, message } from "antd"
+import { Button, Row, Col, Radio, Divider, message,notification } from "antd"
 import axios from "axios"
 
 import { CheckCircleFilled, ArrowLeftOutlined, RightOutlined } from "@ant-design/icons"
@@ -87,60 +87,6 @@ const CheckoutPayment = props => {
         });
     }
 
-    async function displayRazorpay() {
-        const res = await loadScript(
-            "https://checkout.razorpay.com/v1/checkout.js"
-        );
-
-        if (!res) {
-            alert("Razorpay SDK failed to load. Are you online?");
-            return;
-        } 
-        
-        // creating a new order
-        const result = await axios({
-            method: 'post',
-            url: `${cnf.api.base_url}rzorder/create`,
-            data: {
-                cart_id: getCartId(),
-                currencyType: getCurrency(), 
-            },
-            headers: {
-                "Content-type": "application/json; charset=UTF-8",
-            }
-        })
-
-        if (!result) {
-            alert("Server error. Are you online?");
-            return;
-        }
-
-        // Getting the order details back
-        const { amount, id: order_id, currency } = result.data.order;
-        const { b_fname, b_lname, b_email, b_phone } = result.data.billingInfo;
-        const options = {
-            key: "rzp_test_Wq2SaFiGfiKxCG",
-            amount: amount.toString(),
-            currency: currency,
-            // currency: getCurrency(),
-            name: "Piky",
-            description: "Exclusive Saree",
-            order_id: order_id,
-            handler: async function (response) {
-                removeCartId()
-                setRedirect([true, '/checkout/thanks'])
-            },
-            prefill: {
-                name: `${b_fname} ${b_lname}`,
-                email: b_email,
-                contact: b_phone,
-            },
-        };
-
-        const paymentObject = new window.Razorpay(options);
-        paymentObject.open();
-    }
-
     //Coupon
     const handleOnChange = (e) => {
         setCouponCode(e.target.value)
@@ -154,6 +100,87 @@ const CheckoutPayment = props => {
         })
 
     }
+
+
+
+    // @coder-kabir -----------------------------------------------------------------------------------------
+
+        const showNotification = (notificationMessage,notificationDescription) => {
+            notification.open({
+                message: notificationMessage,
+                description:notificationDescription,
+                onClick: () => { console.log('Notification Clicked!') },
+            });
+        };
+
+        async function displayRazorpay(request) {
+            
+            try {
+                
+                const razorpayResponse = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+    
+                if (!razorpayResponse) { return showNotification("Razorpay Error","Razorpay SDK failed to load. Are you online?"); } 
+                
+                const orderResponse = await axios({
+                    method: 'post',
+                    url: `${cnf.api.base_url}rzorder/create`,
+                    data: { cart_id: getCartId(), currencyType: getCurrency(), paymentRequest : request },
+                    headers: { "Content-type": "application/json; charset=UTF-8",}
+                })
+
+                if(!orderResponse) throw new Error("Server error. Are you online?")
+
+                const { amount, id: order_id, currency }     = orderResponse.data.order;
+                const { b_fname, b_lname, b_email, b_phone } = orderResponse.data.billingInfo;
+
+                console.clear(); console.clear(); console.clear();
+
+                  const razorPayOptions = {
+                        key      : "rzp_test_Wq2SaFiGfiKxCG",
+                        amount   : amount.toString(),
+                        currency : currency,
+                        name: "Piky",
+                        description: "Exclusive Saree",
+                        order_id: order_id,
+                        handler: async function (response) { 
+
+                             console.log('response',response);
+                            
+                            // removeCartId(); setRedirect([true, '/checkout/thanks'])  /* removeCartId(); setRedirect([true, '/checkout/thanks']) */ 
+                        },
+                        prefill: {
+                            name: `${b_fname} ${b_lname}`,
+                            email: b_email,
+                            contact: b_phone,
+                        },
+                    };
+
+                    const paymentObject = new window.Razorpay(razorPayOptions);
+        
+                    console.log('payment option',paymentObject.open()); /* open razor pay window */
+
+            } catch (error) { showNotification('Server error',"Server error. Are you online?") }
+        }
+
+        const paymentModeHandler = async (event) => {
+
+            if(paymentMode === "online") return displayRazorpay('online');
+
+            else {
+
+                if(getCartState.cart.shipping === 0){
+                    return placeCodOrder({ cart_id : getCartId(), currencyType : getCurrency(),customer : getCustomer()})
+                }
+
+                showNotification('COD Order',`Pay shipping charges ₹ ${getCartState.cart.shipping} to place cod order`)
+
+                return displayRazorpay('partial-payment');
+            }
+        }
+
+    // ------------------------------------------------------------------------------------------------------
+
+
     return (
         <>
             {redirect[0] &&
@@ -250,18 +277,10 @@ const CheckoutPayment = props => {
                                         <Radio value={'cod'}>Cash on delivery</Radio>
                                     </Radio.Group>
                                 </div> 
-                                <PaymentBtn block type="primary"
-                                    onClick={() => {
-                                        paymentMode === "online"
-                                            ? displayRazorpay()
-                                            : placeCodOrder({
-                                                cart_id: getCartId(),
-                                                currencyType: getCurrency(),
-                                                customer:getCustomer()
-                                                
-                                            })
-                                    }}
-                                >{ paymentMode === "online" ? "PAYMENT" : "PLACE ORDER" }</PaymentBtn> 
+
+                                <PaymentBtn block type="primary" onClick={(event) => { paymentModeHandler(event) }}>
+                                    { paymentMode === "online" ? "PAYMENT" : "PLACE ORDER" }
+                                </PaymentBtn> 
                                 <Link to={`/checkout/shipping`}  >
                                     <Button type="default" style={{ height: "40px", backgroundColor: "#eee", width:"100%", marginTop:"5px" }} ><ArrowLeftOutlined /> GO BACK</Button>
                                  </Link>

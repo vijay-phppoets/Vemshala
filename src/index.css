@@ -104,7 +104,7 @@ html,
     border-radius: 20px;
 }*/
 .desktop_image img {
-  height: 20em !important;
+  height: 39em !important;
   object-fit: contain !important;
 }
 .imirQO {
@@ -174,6 +174,9 @@ html,
   width: 100% !important;
 }
 @media only screen and (max-width: 768px) {
+
+  .sticky-head { display: none !important; }
+
   .desktop {
     width: 100% !important;
   }
@@ -380,6 +383,36 @@ main div {
 #cars:focus-visible {
   border: none !important;
 }
+/* sticky cart head */
+.sticky-head{
+  width:100vw;
+  left: 0;
+  /* align-items: center; */
+  position:fixed;
+  z-index: 2;
+  background: rgb(247, 247, 247);
+  display: flex;
+  padding-right: 10em;
+  padding-left: 10em;
+  justify-content: space-between;
+  visibility:hidden;
+}
+.sticky-head-btn{
+  display:flex;
+  justify-content: end;
+}
+.sticky-head-btn .mainWidth{
+  width: 10em !important;
+  height: 2.5em !important;
+}
+.price-sticky{
+  display: flex;
+  flex-direction: row;
+}
+.sticky-head p{
+  margin-bottom: 0 !important;
+}
+
 
 .half_main {
   width: 50%;
@@ -395,3 +428,5 @@ main div {
 
 input  { border-radius: 8px !important; }
 button { border-radius: 8px !important; }
+.ant-select-selector { border-radius: 8px !important; }
+.ant-drawer-content { z-index: 3; }

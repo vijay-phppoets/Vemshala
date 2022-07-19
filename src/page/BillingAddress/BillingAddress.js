@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Button, Space, Form, Input, Row, Col, Select, message,Modal } from "antd"
+import { Button, Space, Form, Input, Row, Col, Select, message,Modal,Checkbox } from "antd"
 import { CheckCircleFilled, ArrowLeftOutlined, RightOutlined, CheckCircleOutlined} from "@ant-design/icons"
 import { Link, Redirect, useHistory } from "react-router-dom"
 import { connect } from "react-redux"
@@ -34,6 +34,9 @@ const BillingAddress = props => {
     } = props
 
     const [isSelectedAdd, setIsSelectedAdd] = useState('')
+    
+  
+  
 
     const [formData, setFormData] = useState({
         type: "billing",
@@ -128,12 +131,18 @@ const BillingAddress = props => {
             setFormData({ ...formData, [name]: value })
         }
     }
+
+    console.clear(); console.log(getCustomerAddressState)
+
+    const [checked, setChecked] = useState(false);
+    const [disabled, setDisabled] = useState(false);
+
     const handleOnSubmit = () => {
         form.validateFields().then (()=>{
         if (!getToken()){
             saveCartAddress({
                 cart_id: getCartId(),
-                ...formData
+                ...formData,
             })
         }
         else{
@@ -161,6 +170,7 @@ const BillingAddress = props => {
         else{
             saveCartAddress({
                 cart_id: getCartId(),
+                "createCustomer" : checked,
                 "fname":add.first_name,
                 "lname":add.last_name,
                 "company_name":add.company_name,
@@ -176,7 +186,14 @@ const BillingAddress = props => {
             })
         }
     }
- 
+
+
+    useEffect(() => {
+
+        setDisabled(getCustomerAddressState.apiState == "success" ? true : false)
+
+    },[getCustomerAddressState.apiState])
+   
     return (
         <>
             {redirect &&
@@ -240,80 +257,35 @@ const BillingAddress = props => {
                     
                 </WrapperSm>
             </GlobleBox>
-            {/* modal */}
-            <Modal
-                visible={showModal.visible}
-                title="Add Billing Address"
-                onCancel={handleCancel}
-                onOk={handleOnSubmit}
-                okText={"Add Address"}
-                cancelText={"Cancel"}
-                width={"60vw"}
-            >   
-                <Form form={form} layout="vertical">
-                            <Row gutter="24">
-                                <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                                    <Form.Item
-                                    style={{ marginBottom: "6px" }}
-                                    
-                                        name="fname"
-                                        label="First Name"
-                                        rules={[{ required: true, message: 'Required', 
-                                           }]}
-                                    >
-                                        <Input name="fname" placeholder="Enter First Name"
-                                            onChange={handleOnChange}
-                                        />
-                                    </Form.Item>
-                                </Col>
-                                <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                                    <Form.Item
-                                    style={{ marginBottom: "6px" }}
-                                   
-                                        name="lname"
-                                        label="Last Name"
-                                        rules={[{ required: true, message: 'Required' }]}
-                                    >
-                                        <Input name="lname" placeholder="Enter Last Name"
-                                            onChange={handleOnChange}
-                                        />
-                                    </Form.Item>
-                                </Col>
-                                <Col xs={24} sm={24} md={24} lg={24} xl={24}>
-                                    <Form.Item
-                                    style={{ marginBottom: "6px" }}
-                                        name="company_name"
-                                        label="Company Name"
-                                    >
-                                        <Input name="company_name" placeholder="Enter Company Name"
-                                            onChange={handleOnChange}
-                                        />
-                                    </Form.Item>
-                                </Col>
-                                <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                                    <Form.Item
-                                    style={{ marginBottom: "6px" }}
-                                        name="country"
-                                        label="Country"
-                                        rules={[{ required: true, message: 'Required' }]}
-                                    >
-                                        <Select
-                                            name="country"
-                                            placeholder="Select Country"
-                                            showSearch 
-                                            allowClear
-                                            filterOption={(input, option) =>
-                                                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                            }
-                                            onChange={(v, node) => handleSelectChange("country", v, node)}
-                                        >
-                                            <Option key={countryIndia.id} value={countryIndia.id}>{countryIndia.name}</Option>
-                                            {getCountryListState.list.map(country => (
-                                                <Option key={country.id} value={country.id}>{country.name}</Option>
-                                            ))}
-                                        </Select>
-                                    </Form.Item>
-                                </Col>
+
+    <Modal  visible={showModal.visible} title="Add Billing Address"  okText={"Add Address"} cancelText={"Cancel"} width={"60vw"} onCancel={handleCancel} onOk={handleOnSubmit}>   
+        <Form form={form} layout="vertical">
+            <Row gutter="24">
+                <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item style={{ marginBottom: "6px" }} label="First Name"name="fname" rules={[{ required: true, message: 'Required', }]}>
+                        <Input name="fname" placeholder="Enter First Name" onChange={handleOnChange}  />
+                    </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item style={{ marginBottom: "6px" }} name="lname" label="Last Name" rules={[{ required: true, message: 'Required' }]}>
+                        <Input name="lname" placeholder="Enter Last Name" onChange={handleOnChange} />
+                    </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+                    <Form.Item style={{ marginBottom: "6px" }} label="Company Name" name="company_name">
+                        <Input name="company_name" placeholder="Enter Company Name" onChange={handleOnChange} />
+                    </Form.Item>
+                </Col>
+                <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                    <Form.Item style={{ marginBottom: "6px" }} label="Country" name="country" rules={[{ required: true, message: 'Required' }]}>
+                        <Select allowClear showSearch placeholder="Select Country" name="country"  filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0} onChange={(v, node) => handleSelectChange("country", v, node)}>
+                            <Option key={countryIndia.id} value={countryIndia.id}>{countryIndia.name}</Option>
+                                {getCountryListState.list.map(country => (
+                                    <Option key={country.id} value={country.id}>{country.name}</Option>
+                                ))}
+                        </Select>
+                    </Form.Item>
+                </Col>
                                 <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                                     <Form.Item
                                     style={{ marginBottom: "6px" }}
@@ -408,10 +380,11 @@ const BillingAddress = props => {
                                         <Input name="email" placeholder="Enter Email Address" onChange={handleOnChange} />
                                     </Form.Item>
                                 </Col>
-                                
+
+                                <Col xs={24} sm={24} md={24} lg={24} xl={24} style={{ marginTop:'20px', textAlign:'center'  }}>
+                                    { disabled === false && <Checkbox style={{ fontWeight: "bold    ", fontSize:'16px' }} checked={checked} onChange={(e) => setChecked(e.target.checked)}>Create Account</Checkbox> }
+                                </Col>
                             </Row>
-                            
-                            
                 </Form>            
             </Modal>
         </>

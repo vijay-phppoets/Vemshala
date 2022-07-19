@@ -3,7 +3,7 @@ import {
   HeartOutlined,
   ShoppingCartOutlined,
 } from "@ant-design/icons";
-import { Button, Divider, Menu, message, Modal, Space, Spin } from "antd";
+import { Button, Divider, Dropdown, Menu, message, Modal, Radio, Row, Select, Space, Spin } from "antd";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
@@ -18,6 +18,8 @@ import {
   TwitterShareButton,
 } from "react-share";
 import "../Script.js";
+import Mount from '../../modules/Mount'
+
 
 /* CUSTOM COMPONENTS */
 import Product from "../../component/Product/Product";
@@ -292,90 +294,159 @@ const ProductDetail = (props) => {
     setIsModalVisible(false);
   };
 
-  const menu = (
-    <Menu
-      items={[
-        {
-          key: "1",
-          label: (
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://www.antgroup.com"
-            >
-              1st menu item
-            </a>
-          ),
-        },
-        {
-          key: "2",
-          label: (
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://www.aliyun.com"
-            >
-              2nd menu item
-            </a>
-          ),
-        },
-        {
-          key: "3",
-          label: (
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://www.luohanacademy.com"
-            >
-              3rd menu item
-            </a>
-          ),
-        },
-      ]}
-    />
-  );
-  console.clear();
-  console.log(getProductDetailState);
-  return (
-    <>
-      <GlobleBox id="wrap">
+   window.addEventListener('scroll',() => {
+
+      const stickyHead = document.querySelector('.sticky-head');
+      const targetButton = document.querySelector('.target-button');
+      const productImage  = document.querySelectorAll('.product-image ');
+
+      if(targetButton === null || stickyHead === null || productImage === null){  return 0;  }
+
+      if((window.scrollY ) >= targetButton.offsetTop) { stickyHead.style.visibility = 'visible' }
+
+      else { stickyHead.style.visibility = 'hidden' }
+
+      // console.clear();
+      // console.log('sticky head container',stickyHead.scrollTop)
+      // console.log('window scroll Y',window.scrollY)
+      // console.log('target button scrool top',targetButton.scrollTop)
+      // console.log('targetButton offsetTop',targetButton.offsetTop)
+      // console.log('targetButton scrollY',targetButton.scrollY)
+      // console.log(document.body.scrollTop)
+      // console.log(window.pageXOffset)
+      // console.log(productImage[productImage.length- 1].scrollTop)
+      // console.log(scrollTop)
+
+   })
+
+  // @coder-kabir -------------------------------------------------------
+
+      const [picoCondtion, updatePicoCondition] = useState('No');
+      const [blouseCondition,updateBlouseCondition]  = useState('No');
+      const [sizeCondition,updateSizeCondition] = useState('S');
+
+      const [salesPriceAvailable,updateSalesPriceAvailability] = useState(false);
+      const [salesPrice,updateSalesPrice]     = useState(0);
+      const [productPrice,updateProductPrice] = useState(0);
+
+      
+      useEffect(() => { 
+
+        if(getProductDetailState.product === undefined) return null
+
+        if(getProductDetailState.product.is_sale_price === "yes"){
+
+            updateSalesPriceAvailability(true) /* show sales price */
+
+            updateSalesPrice(getProductDetailState.product.sale_price)
+        }
+
+        updateProductPrice(getProductDetailState.product.price)
+        
+        return () => null
+    
+      },[getProductDetailState.apiState])
+
+
+      const picoHandler = (value) => {
+
+          if(value === 'Yes') { 
+
+              if(salesPriceAvailable === true) { updateSalesPrice(salesPrice + 250); }
+          
+              else {  updateProductPrice(productPrice + 250); }
+          }
+
+          else { 
+          
+              if(salesPriceAvailable === true) { updateSalesPrice(salesPrice - 250); }
+          
+              else {  updateProductPrice(productPrice - 250); }
+          }
+
+        updatePicoCondition(value) /* toggle price visibility */ 
+      }
+
+  // --------------------------------------------------------------------
+  
+
+
+return (
+  <React.Fragment>
+    <GlobleBox id="wrap">
         <Helmet>
-          <title>{getProductDetailState.product.name}</title>
-          <meta
-            name="og:title"
-            property="og:title"
-            content={getProductDetailState.product.name}
-          />
-          <meta
-            name="description"
-            content={getProductDetailState.product.short_description}
-          />
+            <title>{getProductDetailState.product.name}</title>
+            <meta name="og:title" property="og:title" content={getProductDetailState.product.name}/>
+            <meta name="description" content={getProductDetailState.product.short_description}/>
         </Helmet>
         <Wrapper>
+          <div className="sticky-head">
+              <div>
+                <p><b>{ selectedProduct ? selectedProduct.name : getProductDetailState.product.name }</b></p>
+                    
+                {(salesPriceAvailable === true) ? (
+                            
+                            <div className="price-sticky">
+                                <Price> { getCurrency() == "USD" ? <>$</> : <>₹</>  } { inr(salesPrice) } </Price>&nbsp;&nbsp;
+                                <RegulerPrice style={{ fontSize:'20px', fontWeight:'400' }}> { getCurrency() == "USD" ? <>$</> : <>₹</> } { inr(productPrice) } </RegulerPrice>
+                            </div>
+                          ) : (
+                            <Price>
+                                { getCurrency() == "USD" ? <>$</> : <>₹</>}
+                                { inr(productPrice) }
+                            </Price>
+                          )}
+              </div>
+
+
+            <div className="sticky-head-btn">
+          <CartButton
+                            type="primary"
+                            size="large"
+                            icon={<ShoppingCartOutlined />}
+                            style={{ marginRight: 8 ,width: '10em',height:'2.5em'}}
+                            onClick={() =>
+                              handleAddToCart(
+                                getProductDetailState.product.id,
+                                1
+                              )
+                            }
+                            loading={updateCartState.apiState === "loading"}
+                          >
+                            ADD TO CART
+                          </CartButton>
+                          <WishlistButton
+                          className="mainWidth"
+                          type="default"
+                          size="large"
+                          icon={
+                            getProductDetailState.is_wishlisted ||
+                            saveWishlistState.apiState === "success" ? (
+                              <HeartFilled />
+                            ) : (
+                              <HeartOutlined />
+                            )
+                          }
+                          onClick={() =>
+                            handleWishlistAdd(getProductDetailState.product.id)
+                          }
+                        >
+                          {getProductDetailState.is_wishlisted ||
+                          saveWishlistState.apiState === "success"
+                            ? "WISHLISTED"
+                            : "WISHLIST"}
+                        </WishlistButton>
+            
+          </div>
+          </div>
           {getProductDetailState.apiState === "loading" && (
-            <div
-              style={{
-                minHeight: 500,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
+            <div  style={{ minHeight: 500, display: "flex", justifyContent: "center", alignItems: "center", }}>
               <Spin size="large" />
             </div>
           )}
           {getProductDetailState.apiState === "success" && (
             <>
-              <div
-                style={{
-                  display: "flex",
-                  marginTop: 16,
-                  flexFlow: "wrap",
-                  background: "#fff",
-                  padding: 10,
-                  borderRadius: 4,
-                }}
-              >
+              <div style={{ display: "flex", marginTop: 16, flexFlow: "wrap", background: "#fff", padding: 10,borderRadius: 4}}>
                 <Left>
                   <DesktopImgContainer>
                     <div>
@@ -425,6 +496,7 @@ const ProductDetail = (props) => {
                           <img
                             src={`${cnf.s3_base_url}${obj.image}`}
                             alt={`${cnf.s3_base_url}${obj.image}`}
+                            className="product-image"
                           />
                         </div>
                       ))}
@@ -432,38 +504,44 @@ const ProductDetail = (props) => {
                   </MobileImgContainer>
                 </Left>
                 <Right>
-                  <div style={{ position: "sticky", top: 90 }}>
-                    <h1 style={{ margin: 0, marginTop: 2, fontSize: 22 }}>
-                      {selectedProduct
-                        ? selectedProduct.name
-                        : getProductDetailState.product.name}
-                    </h1>
-                    <Space style={{ marginBottom: 16 }}>
-                      {(selectedProduct
-                        ? selectedProduct.is_sale_price
-                        : getProductDetailState.product.is_sale_price) ===
-                      "yes" ? (
-                        <>
-                          <Price>
-                            ₹
-                            {selectedProduct
-                              ? inr(selectedProduct.sale_price)
-                              : inr(getProductDetailState.product.sale_price)}
-                          </Price>
-                          <RegulerPrice>
-                            ₹
-                            {selectedProduct
-                              ? inr(selectedProduct.price)
-                              : inr(getProductDetailState.product.price)}
-                          </RegulerPrice>
-                        </>
-                      ) : (
-                        <Price>
-                          {getCurrency() == "USD" ? <>$</> : <>₹</>}
-                          {inr(getProductDetailState.product.price)}
-                        </Price>
-                      )}
-                    </Space>
+                    <div style={{ top: 90 }}>
+                        <h1 style={{ margin: 0, marginTop: 2, fontSize: 22 }}>
+                            { selectedProduct ? selectedProduct.name : getProductDetailState.product.name }
+                        </h1>
+
+                        <Space style={{ marginBottom: 16 }}>
+                            {(salesPriceAvailable === true) ? (
+                            
+                                <React.Fragment>
+                                    <Price> { getCurrency() == "USD" ? <>$</> : <>₹</>  } { inr(salesPrice) } </Price>
+                                    <RegulerPrice> { getCurrency() == "USD" ? <>$</> : <>₹</> } { inr(productPrice) } </RegulerPrice>
+                                </React.Fragment>
+                              ) : (
+                                <Price>
+                                    { getCurrency() == "USD" ? <>$</> : <>₹</>}
+                                    { inr(productPrice) }
+                                </Price>
+                              )}
+                        </Space>
+                    
+                        {/* <Space style={{ marginBottom: 16 }}>
+                            {( selectedProduct ? selectedProduct.is_sale_price : getProductDetailState.product.is_sale_price) === "yes" ? (
+                            
+                                <React.Fragment>
+                                    <Price> 
+                                        ₹ { selectedProduct ? inr(selectedProduct.sale_price) : inr(getProductDetailState.product.sale_price)}
+                                    </Price>
+                                    <RegulerPrice>
+                                        ₹ {selectedProduct ? inr(selectedProduct.price) : inr(getProductDetailState.product.price)}
+                                    </RegulerPrice>
+                                </React.Fragment>
+                              ) : (
+                                <Price>
+                                    { getCurrency() == "USD" ? <>$</> : <>₹</>}
+                                    { inr(getProductDetailState.product.price)}
+                                </Price>
+                              )}
+                        </Space> */}
 
                     <ShortDescription>
                       <div
@@ -476,41 +554,27 @@ const ProductDetail = (props) => {
                         }}
                       ></div>
                     </ShortDescription>
-                    <div className="size">
-                      {getProductDetailState.product.type === "simple" && (
-                        <React.Fragment>
-                          <div className="size-head">
-                            <h2>Select Size</h2>
-                            <a className="btn btn-group">
-                              <h3
-                                onClick={() => setIsBlouseModal(true)}
-                                style={{
-                                  marginBottom: "0",
-                                  marginTop: "5px",
-                                  marginLeft: "1em",
-                                  color: "#ff3f6c",
-                                }}
-                              >
-                                Size chart
-                              </h3>
-                            </a>
-                          </div>
-                          <div className="size-btn">
-                            <div className="main-btn">
-                              <a href="#" className="btn btn-group small">
-                                S
-                              </a>
-                              <a href="#" className="btn btn-group medium">
-                                M
-                              </a>
-                              <a href="#" className="btn btn-group large">
-                                L
-                              </a>
-                              <a href="#" className="btn btn-group x-large">
-                                XL
-                              </a>
-                            </div>
-                          </div>
+
+{/* @coder-kabir--------------------------------------------------------------------------- */}
+
+<div className="size">
+  { getProductDetailState.product.type === "variant" && (
+      <React.Fragment>
+          <div className="size-head">
+              <h2>Select Size</h2>
+              <a className="btn btn-group">
+                  <h3 onClick={() => setIsBlouseModal(true)} style={{ marginBottom: "0",marginTop: "5px", marginLeft: "1em",color: "#ff3f6c",}}>Size chart</h3>
+              </a>
+          </div>
+          <div className="size-btn"><div className="main-btn">
+              <Radio.Group onChange={(event) => console.log(event.target)} value={'S'}>
+                  <Radio value={'S'}>S</Radio>
+                  <Radio value={'M'}>M</Radio>
+                  <Radio value={'L'}>L</Radio>
+                  <Radio value={'XL'}>XL</Radio>
+              </Radio.Group>
+          </div></div>
+                          
                           <div className="color">
                             <h2>Select Color</h2>
                             <div className="select-color">
@@ -535,175 +599,102 @@ const ProductDetail = (props) => {
                       )}
                     </div>
                     <div className="hello" style={{ margin: "1em 0em" }}>
-                      <Button type="primary" onClick={showModal}>
-                        Open Modal
-                      </Button>
-                      <Modal
-                        title="Basic Modal"
-                        visible={isModalVisible}
-                        onOk={handleOk}
-                        onCancel={handleCancel}
-                      >
-                        <div className="blouse">
-                          <div className="blouse_chart">
-                            <h4>Pico</h4>
-                            <div className="full">
-                              <div className="half">
-                                <div class="form-check">
-                                  <input
-                                    onChange={(e) =>
-                                      radioStateHandler(e.target)
-                                    }
-                                    class="form-check-input"
-                                    type="radio"
-                                    name="pico"
-                                    id="pico"
-                                    checked
-                                  />
-                                  <label class="form-check-label" for="pico">
-                                    Yes
-                                  </label>
-                                </div>
-                              </div>
-                              <div className="half">
-                                <div class="form-check">
-                                  <input
-                                    onChange={(e) =>
-                                      radioStateHandler(e.target)
-                                    }
-                                    class="form-check-input"
-                                    type="radio"
-                                    name="pico"
-                                    id="pico"
-                                  />
-                                  <label class="form-check-label" for="pico">
-                                    No
-                                  </label>
-                                </div>
-                              </div>
-                              <div className="half">
-                                {isPico !== true && (
-                                  <div className="price">
-                                    <h4>
-                                      Rs:- <span>250</span>
-                                    </h4>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                            <h4>Blouse Chart</h4>
-                            <div className="full">
-                              <div className="half">
-                                <div class="form-check">
-                                  <input
-                                    onChange={(e) =>
-                                      radioStateHandler(e.target)
-                                    }
-                                    class="form-check-input"
-                                    type="radio"
-                                    value="yes"
-                                    name="blouse"
-                                    id="blouse"
-                                    checked
-                                  />
-                                  <label class="form-check-label" for="blouse">
-                                    Yes
-                                  </label>
-                                </div>
-                              </div>
-                              <div className="half">
-                                <div class="form-check">
-                                  <input
-                                    onChange={(e) =>
-                                      radioStateHandler(e.target)
-                                    }
-                                    class="form-check-input"
-                                    type="radio"
-                                    value="no"
-                                    name="blouse"
-                                    id="blouse2"
-                                  />
-                                  <label class="form-check-label" for="blouse2">
-                                    No
-                                  </label>
-                                </div>
-                              </div>
-                              <div className="half">
-                                {isBlouse !== true && (
-                                  <select name="cars" id="cars">
-                                    <option value="volvo">Line Blouse</option>
-                                    <option value="saab">Round Neck</option>
-                                    <option value="opel">Without Blouse</option>
-                                    <option value="audi">V Neck</option>
-                                  </select>
-                                )}
-                              </div>
-                            </div>
-                            <div className="full">
-                              <div className="half_main">
-                                <div className="main-size">
-                                  <div className="size-head">
-                                    <h2>Select Size</h2>
-                                    <a className="btn btn-group">
-                                      <h3
-                                        onClick={() =>
-                                          setImageChart(!isImageChart)
-                                        }
-                                        style={{
-                                          marginBottom: "0",
-                                          marginTop: "5px",
-                                          marginLeft: "1em",
-                                          color: "#ff3f6c",
-                                        }}
-                                      >
-                                        Size chart
-                                      </h3>
-                                    </a>
-                                  </div>
-                                  <div className="size-btn">
-                                    <div className="main-btn">
-                                      <a
-                                        href="#"
-                                        className="btn btn-group small"
-                                      >
-                                        S
-                                      </a>
-                                      <a
-                                        href="#"
-                                        className="btn btn-group medium"
-                                      >
-                                        M
-                                      </a>
-                                      <a
-                                        href="#"
-                                        className="btn btn-group large"
-                                      >
-                                        L
-                                      </a>
-                                      <a
-                                        href="#"
-                                        className="btn btn-group x-large"
-                                      >
-                                        XL
-                                      </a>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="half_main">
-                                {isImageChart === true && (
-                                  <div className="inner-img">
-                                    <img
-                                      src="https://vemshala-gallery.s3.ap-south-1.amazonaws.com/DSC_5099_1024x1024%402x.webp"
-                                      style={{ width: "100%" }}
-                                    />
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </Modal>
+
+{/* @coder-kabir -------------------------------------------------------------------------------------------------- */}
+
+  { getProductDetailState.product.type === "simple" && <Button type="primary" onClick={showModal}>Product Description</Button>  }
+
+  <Modal title="Product Description" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+      <div className="blouse"><div className="blouse_chart">
+  
+          <div className="full">
+              <div style={{ width : "30%" }}><h4><b>Saree Pico : </b></h4></div>
+              <div style={{ width : "30%" }}>
+                  <Radio.Group onChange={(e) => { picoHandler(e.target.value) }} value={picoCondtion}>
+                      <Space direction="horizontal">
+                          <Radio value={'Yes'}>Yes</Radio>
+                          <Radio value={'No'}>NO</Radio>
+                      </Space>
+                  </Radio.Group>
+              </div>
+              <div style={{ width : "40%" }}> 
+                { picoCondtion === 'Yes' && 
+                  <React.Fragment>
+                      { getCurrency() == "USD" ? <>$</> : <>₹</>} {salesPriceAvailable === true ? salesPrice : productPrice} 
+                  </React.Fragment>
+                }
+              </div>
+          </div>
+
+          <div className="full" style={{ marginTop:'20px' }}>
+              <div style={{ width : "30%" }}><h4><b>Blouse Stitching : </b></h4></div>
+              <div style={{ width : "30%" }}>
+                  <Radio.Group onChange={(e) => { updateBlouseCondition(e.target.value) }} value={blouseCondition}>
+                      <Space direction="horizontal">
+                          <Radio value={'Yes'}>Yes</Radio>
+                          <Radio value={'No'}>NO</Radio>
+                      </Space>
+                  </Radio.Group>
+              </div>
+              <div style={{ width : "40%" }}>
+                { blouseCondition === 'Yes' &&
+                
+                  <Select defaultValue="Select Design" style={{  width: '100%', borderRadius:'10px !important' }} onChange={(...data) => { console.log(data) }}>
+                      <option value="volvo">Line Blouse</option>
+                      <option value="saab">Round Neck</option>
+                      <option value="opel">Without Blouse</option>
+                      <option value="audi">V Neck</option>
+                  </Select>
+                }
+              </div>
+          </div>
+
+          <div className="full" style={{ marginTop:'20px' }}>
+              { blouseCondition === 'Yes' && 
+                  <React.Fragment>
+                      <div style={{ width : "30%" }}><h4><b>Blouse Size : </b></h4></div>
+                      <div style={{ width : "50%" }}>
+                          <Radio.Group onChange={(e) => { updateSizeCondition(e.target.value) }} value={sizeCondition}>
+                              <Space direction="horizontal">
+                                  <Radio value={'S'}>S</Radio>
+                                  <Radio value={'M'}>M</Radio>
+                                  <Radio value={'L'}>L</Radio>
+                                  <Radio value={'XL'}>XL</Radio>
+                              </Space>
+                          </Radio.Group>
+                      </div>
+                  </React.Fragment>
+              }
+          </div>
+
+          <div className="full">
+              <div className="half_main"><div className="main-size">
+                  <div className="size-head">
+                      <h2>Show Size</h2>
+                      <a className="btn btn-group">
+                          <h3 onClick={() => setImageChart(!isImageChart) } style={{ marginBottom: "0", marginTop: "5px", marginLeft: "1em", color: "#ff3f6c",}}>
+                            Show size chart
+                          </h3>
+                      </a>
+                  </div>
+              </div></div>
+          </div>
+          <div className="full"><div style={{ width:"100%" }}>
+              { isImageChart === true && (
+                    <div className="inner-img" style={{ textAlign:'center' }}>
+                          <img style={{ width: "240px",height: '260px' }} src="https://vemshala-gallery.s3.ap-south-1.amazonaws.com/DSC_5099_1024x1024%402x.webp"/>
+                    </div>
+              )}
+          </div></div>
+                          
+      </div></div>                  
+  </Modal>
+
+{/* code done :) -------------------------------------------------------------------------------------------------- */}
+
+
+
+
                       <Modal
                         title="Size Chart"
                         visible={isBlouseModal}
@@ -816,12 +807,8 @@ const ProductDetail = (props) => {
                             size="large"
                             icon={<ShoppingCartOutlined />}
                             style={{ marginRight: 8 }}
-                            onClick={() =>
-                              handleAddToCart(
-                                getProductDetailState.product.id,
-                                1
-                              )
-                            }
+                            onClick={() => handleAddToCart( getProductDetailState.product.id,1)}
+                            className="target-button"
                             loading={updateCartState.apiState === "loading"}
                           >
                             ADD TO CART
@@ -965,7 +952,7 @@ const ProductDetail = (props) => {
         accountVisible={accountVisible}
         onClose={() => setAccountVisible(false)}
       />
-    </>
+    </React.Fragment>
   );
 };
 
